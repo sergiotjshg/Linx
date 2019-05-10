@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Linx.TesteNivelamento.Sergio.Business;
+using Linx.TesteNivelamento.Sergio.Business.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Linx.TesteNivelamento.Sergio
 {
+    [ExcludeFromCodeCoverage]
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -33,6 +37,8 @@ namespace Linx.TesteNivelamento.Sergio
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddTransient<IPessoaBusiness, PessoaBusiness>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,7 +58,11 @@ namespace Linx.TesteNivelamento.Sergio
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            app.UseMvc();
+            app.UseMvc(routes => {
+                routes.MapRoute(
+                    name: "teste",
+                    template: "{controller=Pessoa}/{action=tes}/{Seu-ID-se-houver?}");
+            });
         }
     }
 }
